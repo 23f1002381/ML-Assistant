@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Card Intelligence - Live Demo</title>
-    <meta name="description" content="Extract contact information from business card images using OCR">
+    <title>Business Card Intelligence - Real OCR on GitHub Pages</title>
+    <meta name="description" content="Extract contact information from business card images using real OCR technology">
     <style>
         * {
             margin: 0;
@@ -373,17 +373,21 @@
 <body>
     <div class="header">
         <h1>📇 Business Card Intelligence</h1>
-        <p>Extract contact information from business card images using advanced OCR technology</p>
+        <p>Extract contact information from business card images using real OCR technology</p>
+        <p style="font-size: 0.9rem; color: #888; margin-top: 0.5rem;">🚀 Powered by Real OCR - Works on GitHub Pages!</p>
     </div>
     
     <div class="container">
         <div class="upload-section">
+            <div id="apiKeySection"></div>
+            
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📤</div>
                 <h2>Upload Business Card Images</h2>
                 <p>Drag and drop images here or click to browse</p>
                 <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
-                    Supported formats: JPG, PNG, WebP (Max 10 files)
+                    Supported formats: JPG, PNG, WebP (Max 10 files)<br>
+                    Real OCR processing powered by OCR.space & Tesseract.js
                 </p>
                 <input type="file" id="fileInput" class="file-input" multiple accept="image/*">
             </div>
@@ -415,6 +419,9 @@
         </div>
     </div>
     
+    <!-- Load OCR Service first -->
+    <script src="ocr-service.js"></script>
+    <!-- Then load main app -->
     <script src="app.js"></script>
 </body>
 </html>

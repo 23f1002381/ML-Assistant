@@ -1,13 +1,24 @@
-// Business Card Intelligence - Static Web App
+// Business Card Intelligence - Real OCR Web App for GitHub Pages
 class BusinessCardApp {
     constructor() {
         this.extractedData = [];
+        this.ocrService = null;
         this.init();
     }
 
-    init() {
+    async init() {
+        // Load OCR service
+        this.ocrService = new OCRService();
+        
+        // Load any stored API key
+        const storedApiKey = this.ocrService.getAPIKey();
+        if (storedApiKey) {
+            this.ocrService.setAPIKey(storedApiKey);
+        }
+
         this.setupEventListeners();
         this.loadStoredData();
+        this.showAPIKeySection();
     }
 
     setupEventListeners() {
@@ -15,6 +26,8 @@ class BusinessCardApp {
         const extractBtn = document.getElementById('extractBtn');
         const clearBtn = document.getElementById('clearBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const apiKeyBtn = document.getElementById('apiKeyBtn');
+        const uploadArea = document.getElementById('uploadArea');
 
         if (fileInput) {
             fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
@@ -30,6 +43,70 @@ class BusinessCardApp {
 
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => this.downloadExcel());
+        }
+
+        if (apiKeyBtn) {
+            apiKeyBtn.addEventListener('click', () => this.setAPIKey());
+        }
+
+        // Drag and drop functionality
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files);
+                const fileInput = document.getElementById('fileInput');
+                fileInput.files = e.dataTransfer.files;
+                this.handleFileSelect({ target: { files } });
+            });
+
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+        }
+    }
+
+    showAPIKeySection() {
+        const apiKeySection = document.getElementById('apiKeySection');
+        const hasApiKey = this.ocrService.getAPIKey();
+        
+        if (apiKeySection) {
+            if (hasApiKey) {
+                apiKeySection.innerHTML = `
+                    <div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <p style="margin: 0; color: #2d5a2d;">✅ OCR API Key configured</p>
+                        <button onclick="app.setAPIKey()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #2d5a2d; color: white; border: none; border-radius: 4px; cursor: pointer;">Change API Key</button>
+                    </div>
+                `;
+            } else {
+                apiKeySection.innerHTML = `
+                    <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #856404;">🔑 Set Up OCR API Key (Optional)</h4>
+                        <p style="margin: 0 0 0.5rem 0; color: #856404;">Get free OCR API key from <a href="https://ocr.space/" target="_blank">OCR.space</a> (500 requests/month free)</p>
+                        <button onclick="app.setAPIKey()" style="padding: 0.5rem 1rem; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer;">Set API Key</button>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #666;">Without API key, app will use browser-based OCR (slower but free)</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    setAPIKey() {
+        const apiKey = prompt('Enter your OCR.space API key (get free key at https://ocr.space/):');
+        if (apiKey) {
+            this.ocrService.setAPIKey(apiKey);
+            this.showAPIKeySection();
+            this.showNotification('API key saved successfully!', 'success');
         }
     }
 
@@ -94,18 +171,33 @@ class BusinessCardApp {
             this.updateProgress(i + 1, files.length, file.name);
             
             try {
-                // Simulate OCR processing (in real app, this would call OCR service)
-                const extractedText = await this.simulateOCR(file);
-                const entities = this.extractEntities(extractedText);
+                // Real OCR extraction
+                const extractedText = await this.ocrService.extractTextFromImage(file);
                 
-                entities._source_file = file.name;
-                entities._raw_text = extractedText;
-                this.extractedData.push(entities);
+                if (!extractedText.trim()) {
+                    this.showNotification(`No text detected in: ${file.name}`, 'warning');
+                    const entities = { Name: '', Title: '', Company: '', Email: '', Phone: '', Address: '', Website: '' };
+                    entities._source_file = file.name;
+                    entities._raw_text = '';
+                    this.extractedData.push(entities);
+                } else {
+                    const entities = this.ocrService.extractEntities(extractedText);
+                    entities._source_file = file.name;
+                    entities._raw_text = extractedText;
+                    this.extractedData.push(entities);
+                }
                 
-                await this.delay(500); // Simulate processing time
+                // Small delay to show progress
+                await this.delay(100);
             } catch (error) {
                 console.error(`Error processing ${file.name}:`, error);
-                this.showNotification(`Error processing ${file.name}`, 'error');
+                this.showNotification(`Error processing ${file.name}: ${error.message}`, 'error');
+                
+                // Add empty entry for failed processing
+                const entities = { Name: '', Title: '', Company: '', Email: '', Phone: '', Address: '', Website: '' };
+                entities._source_file = file.name;
+                entities._raw_text = `Error: ${error.message}`;
+                this.extractedData.push(entities);
             }
         }
 
@@ -113,85 +205,6 @@ class BusinessCardApp {
         this.showProgress(false);
         this.showNotification('Processing complete!', 'success');
         this.storeData();
-    }
-
-    async simulateOCR(file) {
-        // Simulate OCR text extraction
-        // In a real implementation, this would call an OCR API
-        const sampleTexts = [
-            `John Doe
-Software Engineer
-Tech Company Inc.
-john.doe@techcompany.com
-+1 (555) 123-4567
-123 Tech Street, Silicon Valley, CA 94000
-www.techcompany.com`,
-
-            `Jane Smith
-Marketing Director
-Creative Agency
-jane.smith@creative.com
-+1 (555) 987-6543
-456 Design Ave, New York, NY 10001`,
-
-            `Robert Johnson
-CEO
-Startup Ventures
-robert.j@startup.io
-+1 (555) 246-8135
-789 Innovation Blvd, Austin, TX 73301
-www.startup.io`
-        ];
-        
-        return sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-    }
-
-    extractEntities(text) {
-        const entities = {
-            Name: '',
-            Title: '',
-            Company: '',
-            Email: '',
-            Phone: '',
-            Address: '',
-            Website: ''
-        };
-
-        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        
-        // Simple regex-based entity extraction
-        lines.forEach(line => {
-            // Email
-            if (!entities.Email && line.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
-                entities.Email = line;
-            }
-            // Phone
-            else if (!entities.Phone && line.match(/[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}/)) {
-                entities.Phone = line;
-            }
-            // Website
-            else if (!entities.Website && line.match(/^www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)) {
-                entities.Website = line;
-            }
-            // Name (usually first line)
-            else if (!entities.Name && line.split(' ').length >= 2 && line.length < 30) {
-                entities.Name = line;
-            }
-            // Title (usually contains common title keywords)
-            else if (!entities.Title && (line.includes('Engineer') || line.includes('Manager') || line.includes('Director') || line.includes('CEO') || line.includes('Developer') || line.includes('Designer'))) {
-                entities.Title = line;
-            }
-            // Company (usually contains Inc, Corp, LLC, etc.)
-            else if (!entities.Company && (line.includes('Inc') || line.includes('Corp') || line.includes('LLC') || line.includes('Company') || line.includes('Agency'))) {
-                entities.Company = line;
-            }
-            // Address (usually contains street, city, state)
-            else if (!entities.Address && (line.match(/\d+\s+\w+\s+(Street|St|Ave|Avenue|Blvd|Boulevard)/) || line.match(/^[A-Z][a-z]+,\s+[A-Z]{2}\s+\d{5}$/))) {
-                entities.Address = line;
-            }
-        });
-
-        return entities;
     }
 
     displayResults() {
@@ -224,7 +237,7 @@ www.startup.io`
                     <div class="raw-text">
                         <button class="toggle-raw" onclick="app.toggleRawText(${index})">View Raw OCR Text</button>
                         <div class="raw-content" id="raw-${index}" style="display: none;">
-                            <pre>${card._raw_text}</pre>
+                            <pre>${card._raw_text || 'No text extracted'}</pre>
                         </div>
                     </div>
                 </div>
@@ -324,7 +337,7 @@ www.startup.io`
     }
 
     downloadExcel() {
-        // Create CSV content (simplified Excel format)
+        // Create CSV content
         const headers = ['Name', 'Title', 'Company', 'Email', 'Phone', 'Address', 'Website'];
         const csvContent = [
             headers.join(','),
@@ -375,7 +388,9 @@ www.startup.io`
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => {
-                document.body.removeChild(notification);
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
             }, 300);
         }, 3000);
     }
