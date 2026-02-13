@@ -15,6 +15,40 @@ A smart OCR-powered web application that extracts contact information from busin
 
 **[🌐 Try the Live Application](https://huggingface.co/spaces/23f1002381/business-card-intelligence)**
 
+## 🎯 How to Deploy Your Own Working App
+
+### Option 1: Hugging Face Spaces (Recommended - Free & Easy)
+
+1. **Create a Hugging Face Account**: https://huggingface.co/join
+2. **Create a New Space**: https://huggingface.co/new-space
+   - **Space Name**: `business-card-intelligence`
+   - **License**: MIT
+   - **Space SDK**: Streamlit
+   - **Hardware**: CPU basic (free)
+3. **Upload your files** or connect your GitHub repository
+4. **Your app will be live** at: `https://huggingface.co/spaces/your-username/business-card-intelligence`
+
+### Option 2: Railway (Easy Deployment)
+
+1. **Install Railway CLI**: `npm install -g @railway/cli`
+2. **Login**: `railway login`
+3. **Deploy**: `railway up`
+4. **Your app gets a live URL**
+
+### Option 3: Render (Free Tier)
+
+1. **Create Render Account**: https://render.com
+2. **Connect your GitHub repository**
+3. **Create a Web Service**
+4. **Deploy with one click**
+
+### Option 4: Streamlit Community Cloud
+
+1. **Go to**: https://share.streamlit.io/
+2. **Connect your GitHub repository**
+3. **Select `app.py` as the main file**
+4. **Deploy instantly**
+
 ## 🛠️ Technology Stack
 
 - **Frontend**: Streamlit
