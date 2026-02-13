@@ -6,6 +6,9 @@ from PIL import Image
 import tempfile
 import os
 
+# Debug - confirm app starts
+st.write("🚀 App started successfully!")
+
 # Page config
 st.set_page_config(
     page_title="Business Card Intelligence",
