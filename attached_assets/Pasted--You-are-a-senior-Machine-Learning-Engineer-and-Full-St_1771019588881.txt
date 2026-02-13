@@ -1,0 +1,278 @@
+
+You are a senior Machine Learning Engineer and Full-Stack Developer.
+
+I have nothing created yet.
+I want to build a complete project from scratch:
+
+🎯 Project Title:
+
+Smart Business Card Intelligence System (OCR + ML + Excel Export)
+
+This must go from:
+
+Basic working version
+→ ML-enhanced version
+→ Clean professional UI
+→ Deployment-ready system
+
+Do NOT overcomplicate.
+No GPU.
+No transformers.
+No cloud APIs.
+Must run locally on Python 3.10.
+
+🔵 PHASE 1 — BASIC WORKING SYSTEM
+
+Build a clean, minimal working system:
+
+Requirements:
+
+Accept image upload (single or multiple up to 20)
+
+Use EasyOCR for text extraction
+
+Use regex + heuristics for entity extraction
+
+Extract:
+
+Name
+
+Company
+
+Designation
+
+Phone
+
+Email
+
+Website
+
+Address
+
+Convert structured output into Excel (.xlsx)
+
+Provide simple Streamlit UI
+
+Folder Structure:
+business-card-ml/
+│
+├── app.py
+├── requirements.txt
+│
+├── src/
+│   ├── image_processor.py
+│   ├── ocr_engine.py
+│   ├── entity_baseline.py
+│   ├── excel_exporter.py
+│   └── utils.py
+│
+├── uploads/
+└── output/
+
+
+Code must:
+
+Use modular structure
+
+Include docstrings
+
+Include type hints
+
+Include error handling
+
+Use config variables (no hardcoding)
+
+Make sure Phase 1 works fully before moving to Phase 2.
+
+🟣 PHASE 2 — REAL ML TRAINING
+
+Now convert this into a real ML project.
+
+Add:
+
+src/
+    dataset_builder.py
+    train_ner.py
+    evaluate.py
+    entity_trained.py
+
+data/
+    raw_cards/
+    annotations.json
+    train.spacy
+    dev.spacy
+
+models/
+    trained_model/
+
+reports/
+    metrics.json
+    comparison.json
+
+Requirements:
+dataset_builder.py
+
+Run OCR on images
+
+Allow manual annotation of entities
+
+Convert to spaCy format
+
+Split 80/20
+
+Save train.spacy & dev.spacy
+
+train_ner.py
+
+Create blank spaCy English model
+
+Add NER pipeline
+
+Add labels dynamically
+
+Use minibatching
+
+Use dropout
+
+Log loss per epoch
+
+Save model
+
+evaluate.py
+
+Load trained model
+
+Evaluate on dev set
+
+Compute:
+
+Precision
+
+Recall
+
+F1
+
+Per-entity metrics
+
+Save results in reports/metrics.json
+
+entity_trained.py
+
+Load trained model
+
+Replace baseline extractor
+
+Return confidence scores
+
+🔵 PHASE 3 — MODEL COMPARISON
+
+Add comparison:
+
+Model	Precision	Recall	F1
+Baseline	X	X	X
+Trained	X	X	X
+
+Save in:
+
+reports/comparison.json
+
+🟢 PHASE 4 — PROFESSIONAL UI
+
+Upgrade UI to look clean and modern.
+
+Requirements:
+
+Drag & drop upload
+
+Support up to 20 images
+
+Model selection dropdown (Baseline / Trained)
+
+Display confidence scores
+
+Editable extracted fields
+
+Export to Excel
+
+Show evaluation metrics
+
+Mobile friendly layout
+
+Loading animation
+
+Keep it simple but professional.
+
+🟡 PHASE 5 — DEPLOYMENT READY
+
+Prepare for deployment:
+
+Add requirements.txt
+
+Add .env support
+
+Add logging system
+
+Add README.md
+
+Ensure app runs with:
+
+streamlit run app.py
+
+
+Make it compatible with:
+
+Local deployment
+
+Streamlit Cloud
+
+Render (optional)
+
+🧠 ENGINEERING RULES
+
+Modular code
+
+Clean architecture
+
+No hardcoded paths
+
+Type hints everywhere
+
+Docstrings everywhere
+
+Proper logging
+
+No placeholder code
+
+No pseudo code
+
+Provide full working implementation
+
+🎓 FINAL RESULT SHOULD ALLOW ME TO SAY:
+
+“This project implements a domain-specific NER model trained on custom-labeled business card data and demonstrates measurable performance improvement over rule-based baseline extraction.”
+
+Start from Phase 1 only.
+
+Do not jump ahead.
+
+Build step-by-step.
+
+🚀 Why This Prompt Works
+
+It:
+
+Controls scope
+
+Forces phased development
+
+Prevents chaos
+
+Anchors AI behavior
+
+Produces deployable architecture
+
+Keeps ML strong
+
+Keeps UI clean
+
+Avoids overengineering
