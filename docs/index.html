@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Card Intelligence - ML Assistant</title>
+    <meta name="description" content="Smart OCR-powered business card processing application">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            color: #2F5496;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #2F5496;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1e3a6f;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+        
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .demo-info {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📇</div>
+        <h1>Business Card Intelligence</h1>
+        <p class="description">
+            A smart OCR-powered web application that extracts contact information from business card images using advanced computer vision and natural language processing.
+        </p>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🖼️</div>
+                <div>Multi-format Support</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔍</div>
+                <div>Advanced OCR</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <div>Entity Recognition</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <div>Excel Export</div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <div class="status">🚀 Live Demo Available</div>
+            <p class="demo-info">
+                This Streamlit application is currently running on a local server. 
+                For the best experience, you can run it locally or deploy it to a cloud platform.
+            </p>
+            
+            <div class="btn-group">
+                <a href="https://github.com/23f1002381/ML-Assistant" class="btn btn-primary">
+                    <span>📂</span> View Source Code
+                </a>
+                <a href="#run-locally" class="btn btn-secondary" onclick="document.getElementById('run-locally').style.display='block'">
+                    <span>💻</span> Run Locally
+                </a>
+            </div>
+        </div>
+        
+        <div id="run-locally" style="display: none; text-align: left; margin-top: 2rem;">
+            <h3>🏃‍♂️ Run Locally</h3>
+            <pre style="background: #f8f9fa; padding: 1rem; border-radius: 10px; overflow-x: auto;">
+# Clone the repository
+git clone https://github.com/23f1002381/ML-Assistant.git
+cd ML-Assistant
+
+# Install dependencies
+pip install streamlit easyocr openpyxl Pillow
+
+# Run the application
+streamlit run app.py
+            </pre>
+        </div>
+        
+        <div style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
+            <p>
+                <strong>Note:</strong> This is a GitHub Pages deployment of the project documentation. 
+                The actual Streamlit application requires a Python server to run.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
