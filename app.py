@@ -19,105 +19,29 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Global Styles */
-    [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-    
     .main-header {
-        font-size: 3rem;
-        font-weight: 800;
-        color: #1e3a8a;
-        margin-bottom: 0.2rem;
-        text-align: center;
-        letter-spacing: -0.025em;
-    }
-    
-    .sub-header {
-        font-size: 1.2rem;
-        color: #4b5563;
-        margin-bottom: 2.5rem;
-        text-align: center;
-        font-weight: 400;
-    }
-    
-    /* Card Container */
-    .card-container {
-        background: white;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 1.5rem;
-        border: 1px solid rgba(229, 231, 235, 0.5);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease-in-out;
-    }
-    
-    .card-container:hover {
-        transform: translateY(-2px);
-    }
-    
-    /* Input Styling */
-    .stTextInput>div>div>input {
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-        padding: 0.6rem;
-    }
-    
-    /* Button Styling */
-    .stButton>button {
-        background: linear-gradient(to right, #2563eb, #1e40af);
-        color: white !important;
-        border-radius: 10px;
-        font-weight: 600;
-        padding: 0.75rem 2rem;
-        border: none;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-        transition: all 0.2s;
-        width: 100%;
-    }
-    
-    .stButton>button:hover {
-        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
-        transform: translateY(-1px);
-    }
-    
-    /* Expander Styling */
-    .streamlit-expanderHeader {
-        background-color: white !important;
-        border-radius: 12px !important;
-        border: 1px solid #e5e7eb !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Metric Card Simulation */
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        text-align: center;
-        border-top: 4px solid #2563eb;
-    }
-    
-    .metric-value {
         font-size: 2rem;
         font-weight: 700;
-        color: #1e3a8a;
+        color: #2F5496;
+        margin-bottom: 0.5rem;
     }
-    
-    .metric-label {
-        font-size: 0.9rem;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+    .sub-header {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 2rem;
     }
-
-    /* File Uploader */
-    [data-testid="stFileUploader"] {
-        background: white;
-        padding: 2rem;
-        border-radius: 16px;
-        border: 2px dashed #cbd5e1;
+    .card-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e0e0e0;
+    }
+    .stButton>button {
+        background-color: #2F5496;
+        color: white;
+        border-radius: 6px;
+        padding: 0.5rem 2rem;
     }
     </style>
     """,
@@ -185,26 +109,15 @@ if uploaded_files:
         from src.utils import UPLOAD_DIR
         cleanup(UPLOAD_DIR)
 
+if st.session_state.processing_done and st.session_state.extracted_data:
     st.divider()
-    st.subheader("📊 Extraction Summary")
-    m_col1, m_col2, m_col3 = st.columns(3)
-    with m_col1:
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{len(st.session_state.extracted_data)}</div><div class="metric-label">Cards Processed</div></div>', unsafe_allow_html=True)
-    with m_col2:
-        emails_found = sum(1 for c in st.session_state.extracted_data if c.get("Email"))
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{emails_found}</div><div class="metric-label">Emails Found</div></div>', unsafe_allow_html=True)
-    with m_col3:
-        phones_found = sum(1 for c in st.session_state.extracted_data if c.get("Phone"))
-        st.markdown(f'<div class="metric-card"><div class="metric-value">{phones_found}</div><div class="metric-label">Phones Found</div></div>', unsafe_allow_html=True)
-
-    st.divider()
-    st.subheader("📇 Extracted Information")
+    st.subheader("Extracted Information")
 
     for card_idx, card_data in enumerate(st.session_state.extracted_data):
         source_file = card_data.get("_source_file", f"Card {card_idx + 1}")
         raw_text = card_data.get("_raw_text", "")
 
-        with st.expander(f"✨ Card {card_idx + 1}: {source_file}", expanded=(card_idx == 0)):
+        with st.expander(f"Card {card_idx + 1}: {source_file}", expanded=(card_idx == 0)):
             col_img, col_data = st.columns([1, 2])
 
             with col_img:
@@ -218,29 +131,18 @@ if uploaded_files:
                     st.image(matching_file, caption=source_file, use_container_width=True)
 
                 if raw_text:
-                    with st.popover("🔍 View Raw OCR Text"):
+                    with st.popover("View Raw OCR Text"):
                         st.text(raw_text)
 
             with col_data:
-                st.markdown('<div class="card-container">', unsafe_allow_html=True)
                 edited_values = {}
-                # Group inputs in columns for better density
-                i_col1, i_col2 = st.columns(2)
-                
-                with i_col1:
-                    edited_values["Name"] = st.text_input("Name", value=card_data.get("Name", ""), key=f"card_{card_idx}_Name")
-                    edited_values["Designation"] = st.text_input("Designation", value=card_data.get("Designation", ""), key=f"card_{card_idx}_Designation")
-                    edited_values["Phone"] = st.text_input("Phone", value=card_data.get("Phone", ""), key=f"card_{card_idx}_Phone")
-                
-                with i_col2:
-                    edited_values["Company"] = st.text_input("Company", value=card_data.get("Company", ""), key=f"card_{card_idx}_Company")
-                    edited_values["Email"] = st.text_input("Email", value=card_data.get("Email", ""), key=f"card_{card_idx}_Email")
-                    edited_values["Website"] = st.text_input("Website", value=card_data.get("Website", ""), key=f"card_{card_idx}_Website")
-                
-                edited_values["Address"] = st.text_area("Address", value=card_data.get("Address", ""), key=f"card_{card_idx}_Address", height=100)
-                
+                for field in ENTITY_FIELDS:
+                    edited_values[field] = st.text_input(
+                        field,
+                        value=card_data.get(field, ""),
+                        key=f"card_{card_idx}_{field}",
+                    )
                 st.session_state.extracted_data[card_idx].update(edited_values)
-                st.markdown('</div>', unsafe_allow_html=True)
 
     st.divider()
 
@@ -252,7 +154,7 @@ if uploaded_files:
     excel_bytes = export_to_excel_bytes(export_data)
     if excel_bytes:
         st.download_button(
-            label="🚀 Download Professional Excel Report",
+            label="Download Excel Report",
             data=excel_bytes,
             file_name="business_cards_extracted.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -260,3 +162,14 @@ if uploaded_files:
             use_container_width=True,
         )
 
+    st.divider()
+    st.subheader("Summary")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Cards Processed", len(st.session_state.extracted_data))
+    with col2:
+        emails_found = sum(1 for c in st.session_state.extracted_data if c.get("Email"))
+        st.metric("Emails Found", emails_found)
+    with col3:
+        phones_found = sum(1 for c in st.session_state.extracted_data if c.get("Phone"))
+        st.metric("Phones Found", phones_found)
