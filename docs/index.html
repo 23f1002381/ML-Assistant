@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Card Intelligence - ML Assistant</title>
-    <meta name="description" content="Smart OCR-powered business card processing application">
+    <title>Business Card Intelligence - Live Demo</title>
+    <meta name="description" content="Extract contact information from business card images using OCR">
     <style>
         * {
             margin: 0;
@@ -16,218 +16,405 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            color: #333;
         }
         
-        .container {
+        .header {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 600px;
-            text-align: center;
             backdrop-filter: blur(10px);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         
-        .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        
-        h1 {
+        .header h1 {
             color: #2F5496;
-            margin-bottom: 1rem;
             font-size: 2.5rem;
-        }
-        
-        .description {
-            color: #666;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .feature {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .feature-icon {
-            font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
         
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 10px;
+            padding: 3rem;
+            text-align: center;
+            transition: border-color 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #2F5496;
+        }
+        
+        .upload-area.dragover {
+            border-color: #2F5496;
+            background: rgba(47, 84, 150, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #2F5496;
+        }
+        
+        .file-input {
+            display: none;
         }
         
         .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-primary {
             background: #2F5496;
             color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
         }
         
-        .btn-primary:hover {
+        .btn:hover:not(:disabled) {
             background: #1e3a6f;
             transform: translateY(-2px);
         }
         
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
         .btn-secondary {
             background: #6c757d;
-            color: white;
         }
         
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background: #545b62;
-            transform: translateY(-2px);
         }
         
-        .demo-section {
+        .file-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .file-item {
             background: #f8f9fa;
-            border-radius: 15px;
-            padding: 2rem;
-            margin: 2rem 0;
+            border-radius: 8px;
+            padding: 1rem;
             border: 1px solid #e0e0e0;
         }
         
-        .demo-info {
+        .file-info {
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            display: block;
+        }
+        
+        .file-size {
+            font-size: 0.9rem;
             color: #666;
+        }
+        
+        .file-preview img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .progress-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
             margin-bottom: 1rem;
         }
         
-        .status {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: #28a745;
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2F5496, #667eea);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .status-text {
+            text-align: center;
+            color: #666;
+        }
+        
+        .results-section {
+            display: none;
+        }
+        
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: #2F5496;
             color: white;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .card-content {
+            padding: 2rem;
+            display: none;
+        }
+        
+        .field-group {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 1rem;
             margin-bottom: 1rem;
+            align-items: center;
+        }
+        
+        .field-group label {
+            font-weight: 600;
+            color: #2F5496;
+        }
+        
+        .field-group input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .field-group input:focus {
+            outline: none;
+            border-color: #2F5496;
+        }
+        
+        .raw-text {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .toggle-raw {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        
+        .raw-content {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .raw-content pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .summary-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .stat {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2F5496;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .actions-section {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #28a745;
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        .notification.warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .notification.info {
+            background: #17a2b8;
         }
         
         @media (max-width: 768px) {
-            .container {
-                padding: 2rem;
-            }
-            
-            h1 {
+            .header h1 {
                 font-size: 2rem;
             }
             
-            .btn-group {
-                flex-direction: column;
+            .container {
+                padding: 1rem;
+            }
+            
+            .field-group {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .field-group label {
+                margin-bottom: 0.5rem;
+            }
+            
+            .summary-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>📇 Business Card Intelligence</h1>
+        <p>Extract contact information from business card images using advanced OCR technology</p>
+    </div>
+    
     <div class="container">
-        <div class="icon">📇</div>
-        <h1>Business Card Intelligence</h1>
-        <p class="description">
-            A smart OCR-powered web application that extracts contact information from business card images using advanced computer vision and natural language processing.
-        </p>
-        
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">🖼️</div>
-                <div>Multi-format Support</div>
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📤</div>
+                <h2>Upload Business Card Images</h2>
+                <p>Drag and drop images here or click to browse</p>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
+                    Supported formats: JPG, PNG, WebP (Max 10 files)
+                </p>
+                <input type="file" id="fileInput" class="file-input" multiple accept="image/*">
             </div>
-            <div class="feature">
-                <div class="feature-icon">🔍</div>
-                <div>Advanced OCR</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📝</div>
-                <div>Entity Recognition</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📊</div>
-                <div>Excel Export</div>
-            </div>
-        </div>
-        
-        <div class="demo-section">
-            <div class="status">🚀 Live Demo Available</div>
-            <p class="demo-info">
-                This Streamlit application is currently running on a local server. 
-                For the best experience, you can run it locally or deploy it to a cloud platform.
-            </p>
             
-            <div class="btn-group">
-                <a href="https://github.com/23f1002381/ML-Assistant" class="btn btn-primary">
-                    <span>📂</span> View Source Code
-                </a>
-                <a href="#run-locally" class="btn btn-secondary" onclick="document.getElementById('run-locally').style.display='block'">
-                    <span>💻</span> Run Locally
-                </a>
+            <div id="filePreview" class="file-preview"></div>
+            
+            <div class="actions-section">
+                <button id="extractBtn" class="btn" disabled>🔍 Extract Information</button>
+                <button id="clearBtn" class="btn btn-secondary" disabled>🗑️ Clear All</button>
+                <button id="downloadBtn" class="btn" disabled>📊 Download Excel</button>
             </div>
         </div>
         
-        <div id="run-locally" style="display: none; text-align: left; margin-top: 2rem;">
-            <h3>🏃‍♂️ Run Locally</h3>
-            <pre style="background: #f8f9fa; padding: 1rem; border-radius: 10px; overflow-x: auto;">
-# Clone the repository
-git clone https://github.com/23f1002381/ML-Assistant.git
-cd ML-Assistant
-
-# Install dependencies
-pip install streamlit easyocr openpyxl Pillow
-
-# Run the application
-streamlit run app.py
-            </pre>
+        <div id="progressContainer" class="progress-container">
+            <div class="progress-bar">
+                <div id="progressBar" class="progress-fill"></div>
+            </div>
+            <div id="statusText" class="status-text">Processing...</div>
         </div>
         
-        <div style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
-            <p>
-                <strong>Note:</strong> This is a GitHub Pages deployment of the project documentation. 
-                The actual Streamlit application requires a Python server to run.
-            </p>
+        <div id="summarySection" class="summary-section" style="display: none;">
+            <h2>📊 Processing Summary</h2>
+            <div id="summaryContainer" class="summary-stats"></div>
+        </div>
+        
+        <div id="resultsSection" class="results-section">
+            <h2 style="color: white; text-align: center; margin-bottom: 2rem;">📋 Extracted Information</h2>
+            <div id="resultsContainer"></div>
         </div>
     </div>
     
-    <script>
-        // Add some interactivity
-        document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>

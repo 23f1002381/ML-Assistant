@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Business Card App to GitHub Pages
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v3
     
-    - name: Create static site
+    - name: Build static site
       run: |
         mkdir -p _site
         cp -r docs/* _site/
